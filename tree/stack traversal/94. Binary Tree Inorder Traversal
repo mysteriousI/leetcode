@@ -1,0 +1,33 @@
+struct command{
+    string s;
+    TreeNode* node;
+    command(string s, TreeNode* node): s(s), node(node){};
+};
+class Solution {
+public:
+    // 非递归解
+    vector<int> inorderTraversal(TreeNode* root) {
+        vector<int> res;
+        if(root == NULL)
+            return res;
+        stack<command> s;
+        s.push(command("visit", root));
+        while(!s.empty())
+        {
+            command c = s.top();
+            s.pop();
+            if(c.s == "use")
+                res.push_back(c.node->val);
+            else
+            {
+                 // 完全按照访问顺序的逆序来操作，这样的方式更容易理解
+                if(c.node->right)
+                    s.push(command("visit", c.node->right));
+                s.push(command("use", c.node));
+                if(c.node->left)
+                    s.push(command("visit", c.node->left));                
+            }
+        }
+        return res;
+    }
+};
