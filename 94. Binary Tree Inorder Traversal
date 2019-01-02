@@ -1,0 +1,94 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+
+struct command{
+    string s;
+    TreeNode* node;
+    command(string s, TreeNode* node): s(s), node(node){};
+};
+class Solution {
+public:
+    // 非递归解
+    vector<int> inorderTraversal(TreeNode* root) {
+        vector<int> res;
+        if(root == NULL)
+            return res;
+        stack<command> s;
+        s.push(command("visit", root));
+        while(!s.empty())
+        {
+            command c = s.top();
+            s.pop();
+            if(c.s == "use")
+                res.push_back(c.node->val);
+            else
+            {
+                 // 完全按照访问顺序的逆序来操作，这样的方式更容易理解
+                if(c.node->right)
+                    s.push(command("visit", c.node->right));
+                s.push(command("use", c.node));
+                if(c.node->left)
+                    s.push(command("visit", c.node->left));                
+            }
+        }
+        return res;
+    }
+};
+
+// class Solution {
+// public:
+//     // void inOrder(TreeNode* &root, vector<int> &num)
+//     // {
+//     //     if(root)
+//     //     {
+//     //         inOrder(root->left, num);
+//     //         num.push_back(root->val);
+//     //         inOrder(root->right, num);
+//     //     }
+//     // }
+//     // vector<int> inorderTraversal(TreeNode* root) {
+//     //     vector<int> num;
+//     //     inOrder(root, num);
+//     //     return num;
+//     // }
+    
+//     // 非递归解
+//     vector<int> inorderTraversal(TreeNode* root) {
+//         vector<int> res;
+//         if(root == NULL)
+//             return res;
+//         stack< pair<TreeNode*, int> > s;
+//         s.push(pair<TreeNode*, int>{root, -1}); // 用一个int记录对应节点访问过的子节点
+//         while(!s.empty())
+//         {
+//             TreeNode* top = s.top().first;
+//             int child_loc = s.top().second;
+//             if(child_loc+1 == 0)
+//             {
+//                 s.top().second = child_loc+1;
+//                 child_loc++; // 以便在当前节点没有左节点时，可以直接放入右节点
+//                 if(top->left)
+//                 {
+//                     s.push(pair<TreeNode*, int>{top->left, -1});
+//                     continue;
+//                 }
+//             }           
+//             res.push_back(top->val);  
+//             s.pop();
+//             if(child_loc+1 == 1)
+//             {
+//                 // s.top().second = child_loc+1;               
+//                 if(top->right)
+//                     s.push(pair<TreeNode*, int>{top->right, -1}); 
+//             }    
+//         }
+//         return res;
+//     }
+// };
