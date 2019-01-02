@@ -1,0 +1,35 @@
+class Solution {
+public:
+    // 非递归解
+    vector<int> inorderTraversal(TreeNode* root) {
+        vector<int> res;
+        if(root == NULL)
+            return res;
+        stack< pair<TreeNode*, int> > s;
+        s.push(pair<TreeNode*, int>{root, -1}); // 用一个int记录对应节点访问过的子节点
+        while(!s.empty())
+        {
+            TreeNode* top = s.top().first;
+            int child_loc = s.top().second;
+            if(child_loc+1 == 0)
+            {
+                s.top().second = child_loc+1;
+                child_loc++; // 以便在当前节点没有左节点时，可以直接放入右节点
+                if(top->left)
+                {
+                    s.push(pair<TreeNode*, int>{top->left, -1});
+                    continue;
+                }
+            }           
+            res.push_back(top->val);  
+            s.pop();
+            if(child_loc+1 == 1)
+            {
+                // s.top().second = child_loc+1;               
+                if(top->right)
+                    s.push(pair<TreeNode*, int>{top->right, -1}); 
+            }    
+        }
+        return res;
+    }
+};
