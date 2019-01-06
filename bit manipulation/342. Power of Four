@@ -1,0 +1,24 @@
+class Solution {
+public:
+    bool isPowerOfFour(int num) {
+        if(num < 1) return false; // 排除非正数
+        int count=0; // 每隔两位出现一个1，而且只能出现一次
+        int count4=0;
+        int n = num;
+        while(n)
+        {
+            count++;
+            n = n & (n-1);
+            if(count > 1) return false; // 1的数位超过1直接返回false
+        }
+        while(num)
+        {
+            if(num & 1)
+                count4++;
+            if(count4 > 1) return false; // 记录每隔两位出现的1的数位，超过1也返回false
+            num = num >> 2;
+        }
+        if(count4 == 1) return true;
+        else return false;
+    }
+};
