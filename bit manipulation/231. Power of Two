@@ -1,0 +1,68 @@
+class Solution {
+public:    
+    // 思路1：利用幂运算来判断数的范围再观察是否为2的整数倍幂，但幂运算的代价较高
+    // bool isPowerOfTwo(int n) {
+    //     if(n <= 0)
+    //         return false;
+    //     if(n == 2 || n == 1)
+    //         return true;
+    //     while(n > 2)
+    //     {
+    //         if(n % 2 != 0)
+    //             return false;
+    //         double temp1;
+    //         int temp2;
+    //         if(n > (int)pow(2.0, 20))
+    //         {
+    //             temp1 = n / pow(2.0, 20);
+    //             temp2 = n / (int)pow(2.0, 20);
+    //             if(temp1 == (double)temp2)
+    //                 n /= (int)pow(2.0, 20);
+    //             else
+    //                 return false;
+    //         }
+    //         else if(n > (int)pow(2.0, 10))
+    //         {
+    //             temp1 = n / pow(2.0, 10);
+    //             temp2 = n / (int)pow(2.0, 10);
+    //             if(temp1 == (double)temp2)
+    //                 n /= (int)pow(2.0, 10);
+    //             else
+    //                 return false;
+    //         }
+    //         else if(n > (int)pow(2.0, 5))
+    //         {
+    //             temp1 = n / pow(2.0, 5);
+    //             temp2 = n / (int)pow(2.0, 5);
+    //             if(temp1 == (double)temp2)
+    //                 n /= (int)pow(2.0, 5);
+    //             else 
+    //                 return false;
+    //         }
+    //         else
+    //         {
+    //             temp1 = n / 2.0;
+    //             temp2 = n / 2;
+    //             if(temp1 == (double)temp2)
+    //                 n /= 2;
+    //             else
+    //                 return false;
+    //         }            
+    //     }
+    //     return true;
+    // }
+    
+    // 思路2：2的整数幂次的二进制数里一定只有一个1，利用这个特点可以使用统计1的方法。
+    bool isPowerOfTwo(int n) {
+        int countOne = 0;
+        if(n <= 0) return false; // 非正数不在考虑范围
+        while(n)
+        {
+            countOne++;
+            if(countOne > 1)
+                break;
+            n = (n-1) & n;
+        }
+        return countOne == 1 ? true:false;
+    }
+};
