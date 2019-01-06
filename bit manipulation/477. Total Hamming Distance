@@ -1,0 +1,46 @@
+class Solution {
+public:
+    int totalHammingDistance(vector<int>& nums) {
+        // 思路1：两个数两两求异或，再用异或的结果求1的个数加以统计。理论上，题目给的数据范围是10^4，是可以满足O(N^2)时间复杂度的，但实际上会超时，需要考虑另外一种思路。
+        // int sum = 0;
+        // int n = nums.size(); // 最好的习惯是定义一个int表示nums的size，否则会因为nums.size是无符号型而出现超时错误
+        // for(int i=0; i<n-1; i++)
+        // {
+        //     for(int j=i+1; j<n; j++)
+        //     {
+        //         int count = 0;
+        //         int num = nums[i] ^ nums[j];
+        //         unsigned int flag = 1;
+        //         while(flag)
+        //         {
+        //             if(flag & num) count++;
+        //             flag = flag << 1;
+        //         }
+        //         sum += count;
+        //     }
+        // }
+        // return sum;
+        
+        // 思路2：把所有数都按数位排列一起观察，同一个数位，出现n个1和m个0时，1个1对应m个0，就有m个distance；同理，1个0对应n个1，就有n个distance，所以一共有m*n个distance.
+        if(nums.size() < 2)
+            return 0;
+        int sum=0;
+        unsigned int flag = 1;
+        while(flag)
+        {
+            int n = nums.size();
+            int countZero = 0;
+            int countOne = 0;
+            for(int i=0; i<n; i++)
+            {
+                if(nums[i] & flag) 
+                    countOne++;
+                else
+                    countZero++;
+            }
+            sum += countOne * countZero;
+            flag = flag << 1;
+        }
+        return sum;
+    }
+};
