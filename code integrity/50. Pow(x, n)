@@ -1,0 +1,26 @@
+class Solution {
+public:
+    double Pow(double x, unsigned int n)
+    {
+        if(n == 0) return 1.0;
+        double half = Pow(x, n >> 1);
+        if(n & 1) return x * half * half; // 使用位运算代替求余和除法, 位运算的&可以用来判断非0，但不能判断0
+        return half*half;
+    }
+    bool existerror = false;
+    double myPow(double x, int n) {
+        // 此题的测试用例里没有出现x为0，n为负数的情况，而实际上这里需要充分考虑异常情况和错误处理
+        existerror = false;
+        if(abs(x) <= 1e-15 && n < 0) // 异常情况特殊处理, x判断是否为0不能直接用==，可以通过精度判断来决定
+        {
+            existerror = true;
+            return 0.0;
+        } 
+        if(n < 0) // 考虑到当n小于0时，可能是绝对值最大的负数，需要把n转换成无符号类型
+        {
+            unsigned int unsigned_n = (unsigned int)(-n);
+            return 1 / Pow(x, unsigned_n);
+        }
+        return Pow(x, (unsigned int)n);
+    }
+};
