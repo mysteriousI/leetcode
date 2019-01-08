@@ -1,0 +1,76 @@
+class Solution {
+public:
+    bool isMatch(string s, string p) {
+       return MatchCore(s, 0, p, 0);
+    }
+    
+    bool MatchCore(string &s, int index_s, string &p, int index_p) // 尽量使用引用符
+    {
+         // 思路：正则表达式匹配需要把字符匹配的各种情况用状态转移有限自动机表达出来
+        if(index_s == s.length() && index_p == p.length())
+            return true;
+        if(index_s < s.length() && index_p >= p.length()) // 匹配的模式不够长
+            return false;
+        if(index_p+1 == p.length()) // 在只有一个字符的情况下，不考虑*
+        {
+            if(index_s < s.length()-1)
+                return false;
+            else if((index_s+1 == s.length()) && (p[index_p] == s[index_s] || p[index_p] == '.'))
+                return true;
+            else 
+                return false;
+        }
+        if(p[index_p+1] == '*') // 考虑*
+        {
+            if((index_s < s.length()) && (p[index_p] == s[index_s] || (p[index_p] == '.'))) // *前一个字符与模式对应字符相等
+                //分三种情况切入状态，一种是只使用一次*前的字符便跳到后面的状态；一种是不使用*前的字符直接跳过；一种是多次使用*前的字符
+                return MatchCore(s, index_s+1, p, index_p+2) ||
+                MatchCore(s, index_s+1, p, index_p) ||
+                MatchCore(s, index_s, p, index_p+2);
+            else
+                return MatchCore(s, index_s, p, index_p+2); // 如果*前的字符不匹配，就直接跳过             
+        }
+        else if((index_s < s.length()) && (p[index_p] == s[index_s] || p[index_p] == '.')) // 没有*
+            return MatchCore(s, index_s+1, p, index_p+1);
+        else
+            return false;
+    }
+};
+
+class Solution {
+public:
+    vector<vector<int>> memo;
+    bool isMatch(string s, string p) {
+        memo = vector<vector<int>>(s.length()+1, vector<int>(p.length()+1, -1));
+       return MatchCore(s, 0, p, 0);
+    }
+    
+    // 思路2：既然存在状态转移，那么就可以利用动态数组存储子状态，自顶向下保留计算过的结果。
+    bool MatchCore(string &s, int index_s, string &p, int index_p) // 尽量使用引用符
+    {
+         // 思路1：正则表达式匹配需要把字符匹配的各种情况用状态转移有限自动机表达出来
+        if(memo[index_s][index_p] != -1)
+            return memo[index_s][index_p];
+        if(index_s == s.length() && index_p == p.length())
+            {memo[index_s][index_p] = true; return true;}
+        if(index_s < s.length() && index_p == p.length()) // 匹配的模式不够长
+            {memo[index_s][index_p] = false; return false;}
+
+        if(index_p+1<p.length() && p[index_p+1] == '*') // 考虑*
+        {
+            if((index_s < s.length()) && (p[index_p] == s[index_s] || (p[index_p] == '.'))) // *前一个字符与模式对应字符相等
+                //分三种情况切入状态，一种是只使用一次*前的字符便跳到后面的状态；一种是不使用*前的字符直接跳过；一种是多次使用*前的字符
+                memo[index_s][index_p] = (MatchCore(s, index_s+1, p, index_p+2) ||
+                MatchCore(s, index_s+1, p, index_p) ||
+                MatchCore(s, index_s, p, index_p+2));            
+            else
+                memo[index_s][index_p] = MatchCore(s, index_s, p, index_p+2); // 如果*前的字符不匹配，就直接跳过      
+            return memo[index_s][index_p];       
+        }
+        else if((index_s < s.length()) && (p[index_p] == s[index_s] || p[index_p] == '.')) // 没有*
+            memo[index_s][index_p] = MatchCore(s, index_s+1, p, index_p+1);
+        else
+            memo[index_s][index_p] = false;
+        return memo[index_s][index_p];
+    }
+};
