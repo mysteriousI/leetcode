@@ -1,0 +1,40 @@
+class Solution {
+public:
+    bool isNumber(string s) {
+        // 思路：根据模式匹配规则A[.[B]][E|eC]
+        if(s.length() == 0)
+            return false;
+        int index=0;
+        while(index < s.length() && s[index] == ' ') // 除去开头的空格
+            index++;
+        if(index < s.length() && (s[index] == '+' || s[index] == '-'))
+            index++;
+        bool numeric = scanInteger(s, index);
+        if(index < s.length() && s[index] == '.')//判断index是否指向小数点部分
+        {
+            index++;
+            numeric = scanInteger(s, index) || numeric;
+        }
+        if(index < s.length() && s[index] == 'e') // 判断index是否指向指数部分
+        {
+            index++;
+            if(index < s.length() && (s[index] == '+' || s[index] == '-'))
+                index++;
+            numeric = numeric && scanInteger(s, index);
+        }
+        while(index < s.length() && s[index] == ' ')
+            index++;
+        
+        if(index == s.length())
+            return numeric;
+        else
+            return false;
+    }
+    bool scanInteger(string s, int &index)
+    {        
+        int first = index;
+        while(index < s.length() && s[index] >= '0' && s[index] <= '9')
+            index++;
+        return index > first;
+    }
+};
