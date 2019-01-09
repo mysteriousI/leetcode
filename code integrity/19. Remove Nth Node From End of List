@@ -1,0 +1,41 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        // 利用双指针是一个更有效的解决思路
+        if(head == NULL || n == 0)
+            return head; // 边界情况下不需要删除，直接返回
+        
+        ListNode* dummyhead = new ListNode(0);
+        dummyhead->next = head;
+        ListNode* front=dummyhead, *back=dummyhead; // 定义双指针，一个在前一个在后控制二者之间的距离为n+1,让back先遍历到链表末尾。
+        for(int i=0; i<n+1; i++)
+        {
+            if(back)
+                back = back->next;
+            else // 此题明确说明了n是合法的，如果n不是合法的，需要考虑边界情况，如果n大于链表的长度，就直接返回链表
+            {
+                delete dummyhead;
+                return head;
+            }
+        }
+        while(back) // 从back的遍历来看，只遍历了一次链表，效率更高
+        {
+            back = back->next;
+            front = front->next;
+        }
+        ListNode* temp = front->next;
+        front->next = temp->next;
+        delete temp;
+        ListNode* retnode = dummyhead->next;
+        delete dummyhead;
+        return retnode;
+    }
+};
