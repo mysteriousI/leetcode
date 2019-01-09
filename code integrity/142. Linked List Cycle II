@@ -1,0 +1,55 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {  
+        // 思路：设环起点前的链表长度为b，环部分的长度为r，设定两指针，前一个指针先走c步，然后后一个指针再和前一个指针一起走，
+        // 则前一个指针走r-(c-b) + nr才和走b + mr步的后一个指针相遇，其中n、m指绕环的次数，则c=r才满足条件；所以先判断环的长度再设置双指针。
+        // 环长度的判断需要设置快慢指针，当快慢指针相遇后，设置计数器，让快指针与慢指针再次相遇
+        if(head == NULL || head->next == NULL)
+            return NULL;
+        int cycle_len = CycleLen(head);
+        if(cycle_len == 0)
+            return NULL;
+        return findBeginNode(head, cycle_len);
+    }
+    int CycleLen(ListNode *head)
+    {
+        ListNode* fast = head, *slow = head;
+        while(fast && fast->next)
+        {
+            fast = fast->next->next;
+            slow = slow->next;
+            if(fast == slow)
+                break;
+        }
+        if(fast == NULL || fast->next == NULL) // 不存在环
+            return 0;
+        int count = 1;
+        fast = fast->next;
+        while(fast != slow)
+        {
+            count++;
+            fast = fast->next;
+        }
+        return count;
+    }
+    ListNode* findBeginNode(ListNode* head, int cycle_len)
+    {
+        ListNode* first = head, *second = head;
+        while(cycle_len--)
+            first = first->next; // 前一个指针先走一个环长度
+        while(first != second)
+        {
+            first = first->next;
+            second = second->next;
+        }
+        return first;
+    }
+};
