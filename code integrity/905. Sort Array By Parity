@@ -1,0 +1,33 @@
+class Solution {
+public:
+    vector<int> sortArrayByParity(vector<int>& A) {
+        // 思路1：从头开始扫描数组，每遇到一个奇数就拿出来放到后面，并把该数后面的数字都往前移动一位，时间复杂度为O(N^2);
+        // 思路2：开辟一段内存，从头到尾扫描数组，把奇数放后面把偶数放前面并控制前后两个指针。时间复杂度O(N), 空间复杂度O(N)。
+        // 思路3：借鉴思路2的方法，不需要开辟空间，直接在原数组上设置前后指针，控制指针的移动交换数字。
+        int left = 0;
+        int right = A.size()-1;
+        while(left < right)
+        {
+            int leftodd = A[left] & 1;
+            int rightodd = A[right] & 1;
+            if(leftodd == 1 && rightodd == 0)
+            {
+                int tmp = A[left];
+                A[left] = A[right];
+                A[right] = tmp;
+                left++;
+                right--;
+            }
+            else if(leftodd == 1 && rightodd == 1)
+                right--;
+            else if(leftodd == 0 && rightodd == 0)
+                left++;
+            else
+            {
+                left++;
+                right--;
+            }
+        }
+        return A;
+    }
+};
