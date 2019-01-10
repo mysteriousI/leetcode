@@ -1,0 +1,30 @@
+ListNode* reverseBetween(ListNode* head, int m, int n) {
+        if(m >= n || m < 1) //尽管题目给了mn的范围，假如没有给的话需要控制条件
+            return head;
+        if(head == NULL || head->next == NULL)
+            return head;
+        ListNode* dummyhead = new ListNode(-1);
+        dummyhead->next = head;
+        ListNode* pre_m = dummyhead, *cur=head, *next_n = NULL;
+        int count=1;
+        while(count < m) // 确定开始的位置
+        {
+            count++;
+            pre_m = cur;
+            cur = cur->next;
+        }
+        ListNode* tail=cur, *pre=NULL; // tail记录m位置指针，pre是反转操作需要灵活使用的指针
+        while(count <= n && cur)
+        {
+            count++;
+            next_n = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = next_n;
+        }
+        tail->next = next_n; // tail的下一个指针指向n位置的后一个指针，m的前一个指针指向n位置的指针
+        pre_m->next = pre;
+        head = dummyhead->next;
+        delete dummyhead;
+        return head;
+    }
