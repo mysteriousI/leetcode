@@ -1,0 +1,23 @@
+ListNode* reverseList(ListNode* head){        
+        if(head == NULL || head->next == NULL)
+            return head;
+        // ListNode* pre = NULL, *cur = head, *next = head->next;
+        // cur->next = pre;
+        // while(next != NULL) // 设置三个指针，分别是前一个指针、当前指针、后一个指针
+        // {
+        //     pre = cur;
+        //     cur = next;
+        //     next = next->next;
+        //     cur->next = pre;
+        // }
+        // return cur;
+        ListNode* pre = NULL, *cur = head, *next;
+        while(cur != NULL) // 另一种写法
+        {
+            next = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = next;
+        }
+        return pre;
+    }
