@@ -1,0 +1,26 @@
+class Solution {
+public:
+    int findMin(vector<int>& nums) {
+        // 此题需要注意特殊情况的判断
+        int low=0, high=nums.size()-1, mid=0;
+        while(nums[low] >= nums[high]) // 必须是旋转过的数组，如果是顺序数组，没必要往下分析直接返回第一个数
+        {
+            mid = (low+high+1)/2;
+            if(low + 1 == high) // low与high是相邻的，由于每次low或high都是修改成mid，最后low和high是相邻的
+                return nums[high];
+            if(nums[mid] == nums[low] && nums[mid] == nums[high]) 
+                // 如果两者相等，即存在重复的元素，从low到high完整遍历
+            {
+                int res = nums[low];
+                for(int i=low; i<high; i++)
+                    res = min(nums[i], res);
+                return res;
+            }
+            if(nums[mid] >= nums[low])
+                low = mid;
+            else
+                high = mid;           
+        }
+        return nums[mid];
+    }
+};
