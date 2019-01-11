@@ -1,0 +1,44 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool isSubtree(TreeNode* s, TreeNode* t) {
+        if(s == NULL && t == NULL) // 首先搞清楚如果t为空树，是否算子树
+            return true;
+        if(s && t)
+        {
+            bool res = JudgeSubTree(s, t);
+            if(!res)
+                res = isSubtree(s->left, t);
+            if(!res)
+                res = isSubtree(s->right, t);
+            return res;
+        }
+        return false;
+    }
+    bool JudgeSubTree(TreeNode* s, TreeNode* t) // 采用前序遍历法
+    {
+        if(s == NULL && t == NULL) // 必须遍历到t是s的完全一部分，才能算完整的子树
+            return true;
+        // if(t == NULL) // 如果不要求t是s的完全子树，返回结果如下
+        //     return true;
+        if(s && t)
+        {
+            if(s->val != t->val)
+                return false;
+            bool res = JudgeSubTree(s->left, t->left);
+            if(!res)
+                return false;
+            res = JudgeSubTree(s->right, t->right);
+            return res;
+        }
+        return false;
+    }
+};
