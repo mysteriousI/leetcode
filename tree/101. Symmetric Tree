@@ -1,0 +1,35 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:    
+    // 同时对左右子树前序遍历，一次遍历就可以解决该问题，需要比较每一步遍历的情况是否相同
+    bool cmpLeftRight(TreeNode* root1, TreeNode* root2)
+    {
+        if(root1 == NULL && root2 == NULL)
+            return true;
+        if(root1 && root2)
+        {
+            if(root1->val != root2->val)
+                return false;
+            bool res = cmpLeftRight(root1->left, root2->right); 
+            // 该函数相当于同时前向遍历root1和root2，对于root1先遍历左子树再到右子树而root2相反
+            if(res == false) 
+                return false;
+            res = cmpLeftRight(root1->right, root2->left);
+            return res;
+        }
+        return false;
+    }
+    bool isSymmetric(TreeNode* root) {
+        if(root == NULL)
+            return true;
+        return cmpLeftRight(root->left, root->right);
+    }
+};
