@@ -1,0 +1,76 @@
+ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+        // 思路1：直接用归并算法中的merge  
+        // 以下为归并解, 时间复杂度为O(N)
+        ListNode* dummyhead = new ListNode(-1);
+        ListNode* cur = dummyhead;
+        while(l1 && l2)
+        {
+            if(l1->val < l2->val)
+            {
+                cur->next = l1;
+                l1 = l1->next;
+            }
+            else
+            {
+                cur->next = l2;
+                l2 = l2->next;
+            }
+            cur = cur->next;
+        }
+        if(l1)
+            cur->next=l1;
+        else
+            cur->next=l2; // 无论剩的是l1还是l2，直接追加l1或l2的当前节点即可，这样剩余的链表部分就能直接追加
+        ListNode *head = dummyhead->next;
+        delete dummyhead;
+        return head;
+    }
+    
+ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {       
+        // 思路2：通过建立小顶堆来解决,时间复杂度O(Nlog2) = O(N)
+        struct cmp {  
+            bool operator() (ListNode *a,ListNode *b) {  
+                return a->val > b->val;  
+            }  // 定义greater函数对应小顶堆,这是优先队列的特殊性质
+        };  
+        
+        ListNode* dummyhead = new ListNode(-1);
+        ListNode* cur = dummyhead;
+        priority_queue<ListNode*, vector<ListNode*>, cmp> heap;
+        if(l1)
+            heap.push(l1);
+        if(l2)
+            heap.push(l2);
+        while(!heap.empty())
+        {
+            ListNode* tmp = heap.top();
+            cur->next = tmp;
+            cur = cur->next;
+            heap.pop();
+            if(tmp->next)
+                heap.push(tmp->next); // 根据链表的指针特性，哪怕不知道弹出的节点属于哪个链表，使用next就能得到同一个链表的节点
+        }
+        ListNode *head = dummyhead->next;
+        delete dummyhead;
+        return head;
+    }
+    
+ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {       
+        // 思路3：与直接merge一样，但不使用循环解而使用递归解，需要注意递归终止条件
+        if(l1 == NULL) // 当有一个链表为空时，返回另一个链表，空的部分已经不需要考虑
+            return l2;
+        if(l2 == NULL)
+            return l1;
+        ListNode* head; // 先确定头节点
+        if(l1->val < l2->val)
+        {
+            head = l1;
+            head->next = mergeTwoLists(l1->next, l2);
+        }
+        else
+        {
+            head = l2;
+            head->next = mergeTwoLists(l1, l2->next);
+        }
+        return head;
+    }
