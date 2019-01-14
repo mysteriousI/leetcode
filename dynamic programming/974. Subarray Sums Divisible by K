@@ -1,0 +1,50 @@
+// class Solution {
+// public:
+//     bool getErrorInput = false;
+//     int subarraysDivByK(vector<int>& A, int K) {
+//         // 思路1：本问题要求罗列所有可能的连续子集，但不要求得到子集的中间结果而是计数，这样可以考虑使用动态规划来实现。
+//         // 状态转移方程：dp[i][j] = dp[i+1][j-1] + A[i], j<=A.size()-i, dp[i][j]是数组中第i个数开始长度为j的子数组和，由于A的长度可以达到30000，申请二维数组是不可行的，需要考虑节省空间的方法，对于dp[i]而言，只需要参考dp[i+1]的结果，因此可以只使用dp[2][30000]的空间实现。时间复杂度O(n^2，由于数组长度为30000，这样的时间复杂度一样会超时。
+//         if(A.size() == 0) // 数组为空返回0
+//             return 0;
+//         if(K == 0) // 处理异常输入
+//         {
+//             getErrorInput = true;
+//             return 0;
+//         }
+//         vector<vector<int>> dp(2, vector<int>(30000, 0));
+//         int count = 0;
+//         int Asize = A.size();
+//         dp[(Asize-1) & 1][1] = A[Asize-1]; //初始化数组中最后一个数
+//         if(dp[(Asize-1) & 1][1] % K == 0)
+//             count++;
+//         for(int i=Asize-2; i>=0; i--)
+//             for(int j=1; j<=Asize-i; j++)
+//             {
+//                 dp[i & 1][j] = dp[(i+1) & 1][j-1] + A[i]; // 利用求余交替使用动态数组
+//                 if(dp[i & 1][j] % K == 0)
+//                     count++;
+//             }
+//         return count;
+//     }
+// };
+
+// 思路2：此题有一个更巧妙的解法，但只针对这种较为特殊的问题。The problem can be categorized into a wide type of problems using pre-sum and hashmap --- like "shortest subarray with sum equal to K", etc. For an array A, define preSum[i] = A[0] + ... + A[i], then the sum of any subarray A[i...j] is sum[i...j] = preSum[j] - preSum[i-1]. If sum[i...j] is divisible by K, then preSum[j] will have the same residual as preSum[i-1] over K. Therefore, we can use a hashmap residualCnt to store the count of pre-sum's with residual over K equal to some value. When we loop each index i in A, we obtain preSum[i], find how many pre-sums have residual preSum[i]%K from the hashmap, add the number to the answer, and increment residualCnt[ preSum[i]%K ] by 1. Since all the residuals are within range [0, K-1], we can use array instead of hashmap to save space. The algorithm takes O(n) time and space.
+
+class Solution {
+public:
+    int subarraysDivByK(vector<int>& A, int K) {
+        int n = A.size();
+        vector<int> residualCnt(K, 0);
+        residualCnt[0] = 1;
+        int sum = 0;
+        int res = 0;
+        for (int num: A) {
+            sum += num;
+            int key = sum%K;
+            if (key < 0)
+                key += K;
+            res += residualCnt[key]++;
+        }
+        return res;
+    }
+};
