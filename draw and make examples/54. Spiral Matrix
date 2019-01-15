@@ -1,0 +1,89 @@
+class Solution {
+public:
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+        // 思路1：控制边界条件，注意从左到右、从上到下、从右到左、从下到上遍历的不同情况
+        vector<int> res;
+        if(matrix.size() == 0 || matrix[0].size() == 0)
+            return res;
+        int height = matrix.size();
+        int width = matrix[0].size();
+        int startrow = 0, endrow = height-1, startcol = 0, endcol = width-1;
+        while(1) // 严格遵守这四步的遍历顺序，如果条件不满足直接退出
+        {
+            if(startcol <= endcol)
+            {
+                for(int i=startcol; i<=endcol; i++) // 从左到右遍历
+                    res.push_back(matrix[startrow][i]);
+                startrow++;
+            }
+            else break;
+            
+            if(startrow <= endrow)
+            {
+                for(int i=startrow; i<=endrow; i++) // 从上到下遍历
+                    res.push_back(matrix[i][endcol]);
+                endcol--;
+            }
+            else break;
+            
+            if(startcol <= endcol)
+            {
+                for(int i=endcol; i>=startcol; i--) // 从右到左遍历
+                    res.push_back(matrix[endrow][i]);
+                endrow--;
+            }
+            else break;
+            
+            if(startrow <= endrow)
+            {
+                for(int i=endrow; i>=startrow; i--) // 从下到上遍历
+                    res.push_back(matrix[i][startcol]);
+                startcol++;
+            }
+            else break;
+        }
+        return res;
+    }
+};
+
+class Solution {
+public:
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+        // 思路2：控制边界条件，注意从左到右、从上到下、从右到左、从下到上遍历的不同情况，时刻以if(startrow <= endrow && startcol <= endcol)
+        // 作为每四步顺序遍历的控制条件。
+        vector<int> res;
+        if(matrix.size() == 0 || matrix[0].size() == 0)
+            return res;
+        int height = matrix.size();
+        int width = matrix[0].size();
+        int startrow = 0, endrow = height-1, startcol = 0, endcol = width-1;
+        while(startrow <= endrow && startcol <= endcol) // 严格遵守这四步的遍历顺序，如果条件不满足直接退出
+        {
+            for(int i=startcol; i<=endcol; i++) // 从左到右遍历
+                res.push_back(matrix[startrow][i]);
+            startrow++;            
+            if(startrow <= endrow && startcol <= endcol)
+            {
+                for(int i=startrow; i<=endrow; i++) // 从上到下遍历
+                    res.push_back(matrix[i][endcol]);
+                endcol--;
+            }
+            
+            if(startrow <= endrow && startcol <= endcol)
+            {
+                for(int i=endcol; i>=startcol; i--) // 从右到左遍历
+                    res.push_back(matrix[endrow][i]);
+                endrow--;
+            }
+            
+            if(startrow <= endrow && startcol <= endcol)
+            {
+                for(int i=endrow; i>=startrow; i--) // 从下到上遍历
+                    res.push_back(matrix[i][startcol]);
+                startcol++;
+            }
+            else break;
+        }
+        return res;
+    }
+};
