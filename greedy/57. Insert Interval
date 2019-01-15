@@ -1,0 +1,97 @@
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class Solution {
+public:
+    static bool cmp(Interval &x, Interval &y)
+    {
+        return x.start < y.start;
+    }
+    vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
+        // 思路：题目给出了前提是非重叠的区间，这样可以先对区间进行排序，排序后，找到新区间可以插入的位置，并与其他区间进行比较后合并。
+        vector<Interval> res;
+        if(intervals.size() == 0)
+        {
+            res.push_back(newInterval);
+            return res;
+        } 
+        sort(intervals.begin(), intervals.end(), cmp);
+        int mergeloc = 0;
+        for(int i=0; i<intervals.size(); i++) // 插入新区间，根据start升序确定插入的位置
+        {
+            if(i == 0 && intervals[i].start >= newInterval.start)
+            {
+                intervals.insert(intervals.begin(), newInterval);
+                mergeloc = 0;
+                break;
+            }
+            if(intervals[i-1].start < newInterval.start 
+                    && intervals[i].start >= newInterval.start)
+            {
+                intervals.insert(intervals.begin()+i, newInterval);
+                mergeloc = i;
+                break;
+            }
+            if(i == intervals.size()-1 && intervals[i].start < newInterval.start)
+            {
+                intervals.push_back(newInterval);
+                mergeloc = i+1;
+                break;
+            }
+        }
+        bool merge = false;
+        int startmerge, endmerge;
+        for(int i=0; i<intervals.size(); i++)
+        {
+            if(i < mergeloc || i > mergeloc && merge == false) // 在合并位置前或者完成合并后，直接插入前面和后面的区间
+                res.push_back(intervals[i]);
+            if(i == mergeloc) // 合并开始
+            {
+                merge = true;
+                if(i == 0 || i > 0 && intervals[i].start > intervals[i-1].end) // 合并开始位置与前一个区间没有交集或者合并开始的就是第一个位置
+                {
+                    startmerge = intervals[i].start;
+                    endmerge = intervals[i].end;
+                }
+                else // 合并的区间存在交集时，去掉前一个区间，将一个区间加入合并范围
+                {
+                    res.pop_back();
+                    startmerge = intervals[i-1].start;
+                    endmerge = intervals[i].end > intervals[i-1].end ? 
+                        intervals[i].end : intervals[i-1].end; // 结束边界选择两个区间中结束位置最大的一个
+                }
+                continue;
+            }
+            if(merge == true)
+            {
+                if(endmerge < intervals[i].start) // 如果合并结束边界小于当前区间开始的位置，两个区间都加入
+                {
+                    Interval newInterval(startmerge, endmerge);
+                    res.push_back(newInterval);
+                    res.push_back(intervals[i]);
+                    merge = false;
+                }
+                else if(endmerge >= intervals[i].start && endmerge <= intervals[i].end) 
+                    // 如果合并结束边界在当前区间内，以当前区间的结束位置为合并结束边界。
+                {
+                    endmerge = intervals[i].end;
+                    Interval newInterval(startmerge, endmerge);
+                    res.push_back(newInterval);
+                    merge = false;
+                }
+            }
+        }
+        if(merge == true) // 直到遍历完毕都没有完成合并
+        {
+            Interval newInterval(startmerge, endmerge);
+            res.push_back(newInterval);
+        }
+        return res;
+    }
+};
