@@ -1,0 +1,81 @@
+class MinStack {
+public:
+    /** initialize your data structure here. */
+    // 思路1：用O(n)的时间复杂度实现，由于栈的更新，每次都要检查栈里的最小值，重新再压入栈
+//     stack<int> num;
+//     MinStack() {
+        
+//     }
+    
+//     void push(int x) {
+//         num.push(x);
+//     }
+    
+//     void pop() {
+//         num.pop();
+//     }
+    
+//     int top() {
+//         return num.top();
+//     }
+    
+//     int getMin() {        
+//         stack<int> temp;
+//         int min = num.top();
+//         while(num.size())
+//         {
+//             temp.push(num.top());            
+//             min = min > num.top() ? num.top() : min;
+//             num.pop();
+//         }
+//         while(temp.size())
+//         {
+//             num.push(temp.top());
+//             temp.pop();            
+//         }
+//         return min;
+//     }
+    
+    // 思路2：用O(1)的时间复杂度解决该问题，设置一个辅助栈，用来存放最小值，如果下一个压入栈的数比最小值大，继续把最小值压入辅助栈
+    stack<int> numStack;
+    stack<int> minOrderStack;
+    int minNum;
+    MinStack() {
+        minNum = INT_MAX;
+    }
+    void push(int x) {
+        if(minNum > x)
+            minNum = x;
+        numStack.push(x);
+        minOrderStack.push(minNum);
+    }   
+    void pop() {
+        if(!minOrderStack.empty())
+            minOrderStack.pop();
+        if(!numStack.empty())
+            numStack.pop();
+        if(!minOrderStack.empty())
+            minNum = minOrderStack.top();
+        else
+            minNum = INT_MAX;
+    }
+    
+    int top() {
+        return numStack.top();
+    }
+    
+    int getMin() {        
+        return minNum;
+    }
+    
+};
+
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * MinStack obj = new MinStack();
+ * obj.push(x);
+ * obj.pop();
+ * int param_3 = obj.top();
+ * int param_4 = obj.getMin();
+ */
