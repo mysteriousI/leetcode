@@ -1,0 +1,31 @@
+class Solution {
+public:
+    bool validateStackSequences(vector<int>& pushed, vector<int>& popped) {
+        if(pushed.size() == 0 && popped.size() == 0)
+            return true;
+        if(pushed.size() != popped.size())
+            return false;
+        stack<int> stackNum;
+        int popLoc = 0;
+        int pushLoc = 0;
+        bool valid = false;
+        while(popLoc < popped.size()) // 以弹出序列的结束为循环终止条件
+        {
+            while(stackNum.empty() || stackNum.top() != popped[popLoc]) 
+            // 如果栈顶元素不等于当前元素，一直压栈
+            {
+                if(pushLoc == pushed.size()) // 如果入栈序列已经结束了但出栈序列还没结束就返回假
+                    break;
+                stackNum.push(pushed[pushLoc]);
+                pushLoc++;
+            }
+            if(stackNum.top() != popped[popLoc]) // 如果栈顶元素始终不等于出栈序列的当前值，直接退出返回假
+                break;
+            stackNum.pop();
+            popLoc++;           
+        }
+        if(popLoc == popped.size() && stackNum.empty())
+            valid = true;
+        return valid;
+    }
+};
