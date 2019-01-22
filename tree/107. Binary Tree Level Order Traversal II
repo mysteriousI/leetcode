@@ -1,0 +1,42 @@
+vector<vector<int>> levelOrderBottom(TreeNode* root) {
+        if(root == NULL)
+            return vector<vector<int>>{};
+        queue<TreeNode*> q;
+        q.push(root);
+        stack<vector<int>> res;
+        res.push(vector<int>{root->val});
+        int curlevel=1, nextlevel=0;
+        vector<int> levelstore;
+        while(!q.empty())
+        {
+            TreeNode* tmp = q.front();
+            q.pop();
+            curlevel--;
+            if(tmp->left)
+            {
+                q.push(tmp->left);
+                levelstore.push_back(tmp->left->val);
+                nextlevel++;
+            }
+            if(tmp->right)
+            {
+                q.push(tmp->right);
+                levelstore.push_back(tmp->right->val);
+                nextlevel++;
+            }
+            if(curlevel == 0 && nextlevel > 0)
+            {
+                res.push(levelstore);
+                levelstore.clear();
+                curlevel = nextlevel;
+                nextlevel = 0;
+            }
+        }
+        vector<vector<int>> vec_res;
+        while(!res.empty())
+        {
+            vec_res.push_back(res.top());
+            res.pop();
+        }
+        return vec_res;
+    }
