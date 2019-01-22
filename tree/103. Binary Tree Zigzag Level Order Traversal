@@ -1,0 +1,130 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    // 思路1：按照层次遍历常用的队列结构，把每一层节点保存在数组里，再根据每一层的奇偶性选择逆序排列数组，时间复杂度较高
+    // vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+    //     queue<TreeNode*> que;
+    //     queue<int> total;
+    //     int curlevel = 1, nextlevel = 0;
+    //     int count = 0;
+    //     vector<vector<int>> res;
+    //     if(root == NULL)
+    //         return res;
+    //     que.push(root);
+    //     vector<int> zigzag;
+    //     zigzag.push_back(root->val);
+    //     res.push_back(zigzag);
+    //     while(que.size())
+    //     {
+    //         TreeNode* temp = que.front();
+    //         que.pop();
+    //         curlevel--;
+    //         if(temp->left)
+    //         {
+    //             que.push(temp->left);
+    //             total.push(temp->left->val);
+    //             nextlevel++;
+    //         } 
+    //         if(temp->right)
+    //         {
+    //             que.push(temp->right);
+    //             total.push(temp->right->val);
+    //             nextlevel++;
+    //         }
+    //         if(curlevel == 0 && nextlevel != 0)
+    //         {
+    //             curlevel = nextlevel;
+    //             nextlevel = 0;
+    //             zigzag.clear();
+    //             if(count % 2 == 1)
+    //                 for(int i=0;i<curlevel;i++)
+    //                 {
+    //                     zigzag.push_back(total.front());
+    //                     total.pop();
+    //                 }
+    //             else
+    //             {
+    //                 stack<int> right;
+    //                 for(int i=0;i<curlevel;i++)
+    //                 {
+    //                     right.push(total.front());
+    //                     total.pop();
+    //                 }
+    //                 while(right.size())
+    //                 {
+    //                     zigzag.push_back(right.top());
+    //                     right.pop();
+    //                 }
+    //             }
+    //             count++;
+    //             res.push_back(zigzag);
+    //         }
+    //     }
+    //     return res;
+    // }
+    
+    // 思路2：借助两个栈实现奇偶层的节点存放，这样只需要遍历一次节点，不需要再用一次遍历倒换数组的顺序
+    vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+        vector<vector<int>> res;
+        if(root == NULL)
+            return res;
+        stack<TreeNode*> left2right;
+        stack<TreeNode*> right2left;
+        left2right.push(root);
+        vector<int> store;
+        res.push_back(vector<int>{root->val});
+        while(!left2right.empty() || !right2left.empty()) 
+        {
+            while(!left2right.empty()) 
+            {
+                TreeNode* tmp = left2right.top();
+                left2right.pop();
+                if(tmp->right) // 从右至左存入数组，实现逆序
+                {
+                    right2left.push(tmp->right);
+                    store.push_back(tmp->right->val);
+                }
+                if(tmp->left)
+                {
+                    right2left.push(tmp->left);
+                    store.push_back(tmp->left->val);
+                }
+            }
+            if(store.size())
+            {
+                res.push_back(store);
+                store.clear();
+            }
+            while(!right2left.empty())
+            {
+                TreeNode* tmp = right2left.top();
+                right2left.pop();
+                if(tmp->left) // 从左至右存入数组，实现顺序
+                {
+                    left2right.push(tmp->left);
+                    store.push_back(tmp->left->val);
+                }
+                if(tmp->right)
+                {
+                    left2right.push(tmp->right);
+                    store.push_back(tmp->right->val);
+                }
+            }
+            if(store.size())
+            {
+                res.push_back(store);
+                store.clear();
+            }
+        }
+        return res;
+    }
+    
+};
