@@ -9,31 +9,78 @@
 class Solution {
 public:
     RandomListNode *copyRandomList(RandomListNode *head) {
-        if(head == NULL)
-            return head;
-        RandomListNode* newhead = new RandomListNode(head->label);
-        
         //思路1：利用哈希表存储原始链表与新建链表对应的节点
-        unordered_map<RandomListNode*, RandomListNode*> list2list;
-        RandomListNode* cur = head, *copy_cur = newhead;
+        // if(head == NULL)
+        //     return head;
+        // RandomListNode* newhead = new RandomListNode(head->label);            
+//         unordered_map<RandomListNode*, RandomListNode*> list2list;
+//         RandomListNode* cur = head, *copy_cur = newhead;
         
-        while(cur->next) //第一步完成链表的复制和映射表建立
-        {
-            copy_cur->next = new RandomListNode(cur->next->label);
-            list2list.insert(make_pair(cur, copy_cur));
-            cur = cur->next;
-            copy_cur = copy_cur->next;
-        }
-        list2list.insert(make_pair(cur, copy_cur)); // 链表最后一个节点也要做好映射
+//         while(cur->next) //第一步完成链表的复制和映射表建立
+//         {
+//             copy_cur->next = new RandomListNode(cur->next->label);
+//             list2list.insert(make_pair(cur, copy_cur));
+//             cur = cur->next;
+//             copy_cur = copy_cur->next;
+//         }
+//         list2list.insert(make_pair(cur, copy_cur)); // 链表最后一个节点也要做好映射
         
-        copy_cur = newhead;
-        cur = head;
-        while(cur && copy_cur) // 第二步根据映射表寻找随机指针的位置 
-        {
-            copy_cur->random = list2list[cur->random];
-            cur = cur->next;
-            copy_cur = copy_cur->next;
-        }
+//         copy_cur = newhead;
+//         cur = head;
+//         while(cur && copy_cur) // 第二步根据映射表寻找随机指针的位置 
+//         {
+//             copy_cur->random = list2list[cur->random];
+//             cur = cur->next;
+//             copy_cur = copy_cur->next;
+//         }
+//         return newhead;
+        
+        //思路2：不借助哈希表，将复制的节点紧接在原始节点上
+        RandomListNode *newhead = buildLists(head); // 变成2n长的链表
+        newhead = connectRandom(newhead); // 连接随机指针
+        newhead = retainCopy(newhead); // 只保留复制的部分
         return newhead;
+    }
+    RandomListNode* buildLists(RandomListNode* head)
+    {
+        if(head == NULL)
+            return NULL;        
+        RandomListNode *cur = head, *next = head->next;
+        while(cur)
+        {
+            cur->next = new RandomListNode(cur->label);
+            cur->next->next = next;
+            cur = next;
+            if(cur) next = cur->next;
+        }
+        return head;
+    }
+    
+    RandomListNode* connectRandom(RandomListNode* head)
+    {
+        if(head == NULL)
+            return NULL;
+        RandomListNode *cur = head;
+        while(cur)
+        {
+            if(cur->random)
+                cur->next->random = cur->random->next;
+            cur = cur->next->next;
+        }
+        return head;
+    }
+    
+    RandomListNode* retainCopy(RandomListNode* head) // 该过程不能改变原始链表
+    {
+        if(head == NULL)
+            return NULL;
+        RandomListNode *newhead = head->next; // 新链表开始的位置
+        RandomListNode *cur = head, *copy_cur = newhead;
+        while(cur->next)
+        {
+            cur->next = cur->next->next; // 跳过中间一个节点
+            cur = cur->next;
+        }
+        return head->next;
     }
 };
