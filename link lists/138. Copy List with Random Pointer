@@ -1,0 +1,39 @@
+/**
+ * Definition for singly-linked list with a random pointer.
+ * struct RandomListNode {
+ *     int label;
+ *     RandomListNode *next, *random;
+ *     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    RandomListNode *copyRandomList(RandomListNode *head) {
+        if(head == NULL)
+            return head;
+        RandomListNode* newhead = new RandomListNode(head->label);
+        
+        //思路1：利用哈希表存储原始链表与新建链表对应的节点
+        unordered_map<RandomListNode*, RandomListNode*> list2list;
+        RandomListNode* cur = head, *copy_cur = newhead;
+        
+        while(cur->next) //第一步完成链表的复制和映射表建立
+        {
+            copy_cur->next = new RandomListNode(cur->next->label);
+            list2list.insert(make_pair(cur, copy_cur));
+            cur = cur->next;
+            copy_cur = copy_cur->next;
+        }
+        list2list.insert(make_pair(cur, copy_cur)); // 链表最后一个节点也要做好映射
+        
+        copy_cur = newhead;
+        cur = head;
+        while(cur && copy_cur) // 第二步根据映射表寻找随机指针的位置 
+        {
+            copy_cur->random = list2list[cur->random];
+            cur = cur->next;
+            copy_cur = copy_cur->next;
+        }
+        return newhead;
+    }
+};
