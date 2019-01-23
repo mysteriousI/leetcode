@@ -70,17 +70,21 @@ public:
         return head;
     }
     
-    RandomListNode* retainCopy(RandomListNode* head) // 该过程不能改变原始链表
+    RandomListNode* retainCopy(RandomListNode* head) 
+        // 该过程不能改变原始链表，所以无论是复制的链表还是原始链表都要重新建立好节点间的关系
     {
         if(head == NULL)
             return NULL;
         RandomListNode *newhead = head->next; // 新链表开始的位置
         RandomListNode *cur = head, *copy_cur = newhead;
-        while(cur->next)
+        while(cur->next->next)
         {
             cur->next = cur->next->next; // 跳过中间一个节点
+            copy_cur->next = copy_cur->next->next;
             cur = cur->next;
+            copy_cur = copy_cur->next;
         }
-        return head->next;
+        cur->next = NULL;
+        return newhead;
     }
 };
