@@ -1,0 +1,129 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Codec {
+public:
+    
+    int str2int(string str)
+    {
+        int count = 0;
+        int i = 0;
+        bool isNegative = false;
+        if(str[0] == '-')
+            {i++; isNegative=true;}
+        for(; i<str.length(); i++)
+            count = count*10 + int(str[i]-'0');
+        if(isNegative == true)
+            count = -count;
+        return count;
+    }
+    
+    string int2str(int num)
+    {
+        string str = "";
+        if(num == 0)
+        {str = "0"; return str;}
+        bool isNegative = false;
+        if(num < 0)
+            isNegative = true;
+        num = abs(num);
+        while(num)
+        {
+            str = (char)(num%10 + '0') + str;
+            num /= 10;
+        }
+        if(isNegative == true)
+            str = '-' + str;
+        return str;
+    }
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        string res = "[";
+        if(root == NULL)
+            return res+"]";
+        queue<TreeNode*> q;
+        q.push(root);
+        res += int2str(root->val) + ',';
+        while(!q.empty())
+        {
+            TreeNode* tmp = q.front();
+            q.pop();
+            if(tmp->left)
+            {
+                res += int2str(tmp->left->val) + ',';
+                q.push(tmp->left);
+            }
+            else
+                res += "null,";
+            if(tmp->right)
+            {
+                res += int2str(tmp->right->val) + ',';
+                q.push(tmp->right);
+            }
+            else
+                res += "null,";
+        }
+        res = res.substr(0, res.length()-1) + "]"; // 去除最后一个逗号
+        return res;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        if(data == "[]") 
+            return NULL;
+        vector<string> vals; // 存储所有值
+        data = data.substr(1, data.length()-1);
+        while(data != "]")
+        {
+            string str;
+            if(data.find(',') != -1)
+            {
+                str = data.substr(0, data.find(','));
+                data = data.substr(data.find(',')+1, 
+                                   data.length()-1-data.find(','));
+            }
+            else
+            {
+                str = data.substr(0, data.find(']'));
+                data = data.substr(data.find(']'), 1);
+            } 
+            vals.push_back(str);
+        }
+        
+        TreeNode* root = new TreeNode(str2int(vals[0]));
+        queue<TreeNode*> q;
+        q.push(root);
+        int readVals=1;
+        while(!q.empty())
+        {
+            TreeNode* tmp = q.front();
+            q.pop();
+            if(readVals < vals.size() && vals[readVals] != "null") 
+                // 判断左子节点
+            {
+                int val = str2int(vals[readVals]);
+                tmp->left = new TreeNode(val);
+                q.push(tmp->left);                
+            }
+            if(readVals+1 < vals.size() && vals[readVals+1] != "null") 
+                // 判断右子节点
+            {
+                int val = str2int(vals[readVals+1]);
+                tmp->right = new TreeNode(val);
+                q.push(tmp->right);
+            }
+            readVals += 2;
+        }
+        return root;
+    }
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec codec;
+// codec.deserialize(codec.serialize(root));
