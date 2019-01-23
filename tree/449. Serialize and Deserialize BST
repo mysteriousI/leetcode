@@ -1,0 +1,120 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Codec {
+public:
+    
+    int str2int(string str)
+    {
+        int count = 0;
+        int i = 0;
+        bool isNegative = false;
+        if(str[0] == '-')
+            {i++; isNegative=true;}
+        for(; i<str.length(); i++)
+            count = count*10 + int(str[i]-'0');
+        if(isNegative == true)
+            count = -count;
+        return count;
+    }
+    
+    string int2str(int num)
+    {
+        string str = "";
+        if(num == 0)
+        {str = "0"; return str;}
+        bool isNegative = false;
+        if(num < 0)
+            isNegative = true;
+        num = abs(num);
+        while(num)
+        {
+            str = (char)(num%10 + '0') + str;
+            num /= 10;
+        }
+        if(isNegative == true)
+            str = '-' + str;
+        return str;
+    }
+    
+    void preOrder(TreeNode* root, string &res)
+    {
+        if(root == NULL)
+            return;
+        res += int2str(root->val);
+        if(root->left)
+        {
+            res += ',';
+            preOrder(root->left, res);
+        }
+        if(root->right)
+        {
+            res += ',';
+            preOrder(root->right, res);
+        }
+    }
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        string res = "[";
+        if(root == NULL)
+            return res+"]";
+        preOrder(root, res); // 对于二叉排序树，前序遍历的结果只对应一种可能的二叉树，可以省略null对结果的影响
+        res += ']';
+        return res;
+    }
+    void preBuildTree(TreeNode* &root, vector<int> &vals, int start, int end)
+    {
+        if(start >= end)
+            return;
+        int leftIndex = start;
+        while(leftIndex < end && root->val > vals[leftIndex])
+            leftIndex++;
+        if(start < leftIndex)
+        {
+            root->left = new TreeNode(vals[start]);
+            preBuildTree(root->left, vals, start+1, leftIndex);
+        }
+        if(leftIndex < end)
+        {
+            root->right = new TreeNode(vals[leftIndex]);
+            preBuildTree(root->right, vals, leftIndex+1, end);
+        }
+    }
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        if(data == "[]") 
+            return NULL;
+        vector<int> vals; // 存储所有值
+        data = data.substr(1, data.length()-1);
+        while(data != "]")
+        {
+            string str;
+            if(data.find(',') != -1)
+            {
+                str = data.substr(0, data.find(','));
+                data = data.substr(data.find(',')+1, 
+                                   data.length()-1-data.find(','));
+            }
+            else
+            {
+                str = data.substr(0, data.find(']'));
+                data = data.substr(data.find(']'), 1);
+            } 
+            vals.push_back(str2int(str));
+        }
+
+        TreeNode* root = new TreeNode(vals[0]);
+        preBuildTree(root, vals, 1, vals.size()); // 分治建立二叉树
+        return root;
+    }
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec codec;
+// codec.deserialize(codec.serialize(root));
