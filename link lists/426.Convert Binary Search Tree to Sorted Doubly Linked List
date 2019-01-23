@@ -1,0 +1,31 @@
+TreeNode* Convert(TreeNode* root)
+    {
+        if(root == NULL)
+            return NULL;
+        TreeNode* dummyhead = new TreeNode(-1); // 建立一个虚拟头节点，用来保存头节点的位置
+        TreeNode* LastNode = dummyhead;
+        ConvertNode(root, LastNode);
+        TreeNode* head = dummyhead->right;  
+        delete dummyhead;
+        
+        // 如果没有虚拟头节点，需要再花费O(N)的时间寻找头节点
+        // TreeNode* LastNode = NULL;
+        // ConvertNode(root, LastNode);
+        // TreeNode* head = LastNode;
+        // while(head && head->left)
+        //     head = head->left;
+        return head;
+    }
+    
+    void ConvertNode(TreeNode* root, TreeNode* &LastNode) // 添加引用符可以在递归的过程中全局修改lastnode
+    {
+        if(root == NULL)
+            return;
+        TreeNode* cur = root;
+        ConvertNode(root->left, LastNode); // 遍历左子树
+        cur->left = LastNode;
+        if(LastNode)
+            LastNode->right = cur;
+        LastNode = cur;
+        ConvertNode(root->right, LastNode); // 遍历右子树
+    }
