@@ -1,0 +1,34 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void findPath(TreeNode* root, int sum, int &res)
+    {
+        if(root == NULL)
+            return;
+        if(root->val == sum)
+            res++;
+        findPath(root->left, sum-root->val, res);
+        findPath(root->right, sum-root->val, res);
+    }
+    void preOrder(TreeNode* root, int sum, int &res) // 需要以每个节点为根节点遍历子树
+    {
+        if(root == NULL)
+            return;
+        findPath(root, sum, res);
+        preOrder(root->left, sum, res);
+        preOrder(root->right, sum, res);
+    }
+    int pathSum(TreeNode* root, int sum) {
+        int res = 0;
+        preOrder(root, sum, res);
+        return res;
+    }
+};
