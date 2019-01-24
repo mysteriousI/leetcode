@@ -1,0 +1,39 @@
+class Solution {
+public:
+    void backtrack(int n, int row_index, vector<int> &row, vector<bool> &col, vector<bool> &dia1, vector<bool> &dia2, vector<vector<string>> &res)
+    {
+        if(row_index == n)
+        {
+            vector<string> tmp(n, string(n, '.'));
+            
+            for(int i=0; i<n; i++)
+                tmp[i][row[i]] = 'Q';
+            res.push_back(tmp);
+            return;
+        }
+        for(int i=0; i<n; i++)
+        {
+            if(col[i] == false && dia1[row_index+i] == false && dia2[row_index-i+n-1] == false) // 剪枝条件
+            {
+                row.push_back(i); // 在指定的某列i行中放入一个皇后，此时对应的列和两条对角线上不允许再出现皇后 
+                col[i] = true;
+                dia1[row_index+i] = true;
+                dia2[row_index-i+n-1] = true;
+                backtrack(n, row_index+1, row, col, dia1, dia2, res);
+                col[i] = false;
+                dia1[row_index+i] = false;
+                dia2[row_index-i+n-1] = false;
+                row.pop_back();
+            }                   
+        }
+    }
+    vector<vector<string>> solveNQueens(int n) {
+        vector<vector<string>> res;
+        vector<int> row;
+        vector<bool> col(n);
+        vector<bool> dia1(2*n-1); // 每个方向都有2*n-1条对角线
+        vector<bool> dia2(2*n-1);
+        backtrack(n, 0, row, col, dia1, dia2, res);
+        return res;
+    }
+};
