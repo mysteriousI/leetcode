@@ -1,0 +1,69 @@
+class Solution {
+public:
+    vector<string> letterCasePermutation(string S) {
+        // 思路1：考虑用循环来实现，这样需要考虑的情况较多
+        // vector<string> res;
+        // if(S.length() == 0)
+        //     res.push_back("");
+        // for(int i=0; i<S.length(); i++)
+        // {
+        //     if(S[i] >= 'a' && S[i] <= 'z')
+        //     {
+        //         if(res.size() == 0)
+        //             {string temp = ""; res.push_back(temp + S[i]); char another = S[i] - 'a' + 'A'; res.push_back(temp + another);}
+        //         else
+        //         {
+        //             int len = res.size();
+        //             for(int j=0; j<len; j++)
+        //             {char another = S[i] - 'a' + 'A'; res.push_back(res[j] + another); res[j] = res[j] + S[i];}
+        //         }
+        //     }
+        //     else if(S[i] >= 'A' && S[i] <= 'Z')
+        //     {
+        //         if(res.size() == 0)
+        //             {string temp = ""; res.push_back(temp + S[i]); char another = S[i] - 'A' + 'a';res.push_back(temp + another);}
+        //         else
+        //         {
+        //             int len = res.size();
+        //             for(int j=0; j<len; j++)
+        //             {char another = S[i] - 'A' + 'a'; res.push_back(res[j] + another); res[j] = res[j] + S[i];}
+        //         }
+        //     }
+        //     else if(!(S[i] >= 'a' && S[i] <= 'z' || S[i] >= 'A' && S[i] <= 'Z'))
+        //     {
+        //         if(res.size() == 0)
+        //         {string temp = ""; res.push_back(temp + S[i]);}
+        //         else
+        //             for(int j=0; j<res.size(); j++)
+        //                 res[j] = res[j] + S[i];
+        //     }
+        // }
+        // return res;
+        
+        // 思路2：排列问题考虑回溯和递归
+        vector<string> res;
+        backtrack(S, 0, res, "");
+        return res;
+    }
+    
+    void backtrack(string S, int index, vector<string> &res, string str)
+    {
+        if(str.length() == S.length())
+        {
+            res.push_back(str);
+            return;
+        }
+        if(S[index] >= 'a' && S[index] <= 'z')
+        {
+            backtrack(S, index+1, res, str+S[index]);
+            backtrack(S, index+1, res, str+ (char)(S[index] - 'a' + 'A'));
+        }
+        else if(S[index] >= 'A' && S[index] <= 'Z')
+        {
+            backtrack(S, index+1, res, str+S[index]);
+            backtrack(S, index+1, res, str+ (char)(S[index] - 'A' + 'a'));
+        }
+        else
+            backtrack(S, index+1, res, str+S[index]);
+    }
+};
