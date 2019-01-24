@@ -1,0 +1,33 @@
+class Solution {
+public:
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        vector<vector<int>> res;
+        vector<int> store;
+        vector<bool> visited(nums.size());
+        backtrack(res, store, visited, nums);
+        return res;
+    }
+    
+    void backtrack(vector<vector<int>>& res, vector<int> store, vector<bool> visited, vector<int> nums)
+    {
+        if(store.size() == nums.size())
+        {
+            res.push_back(store);
+            return;
+        }
+        for(int i=0; i<nums.size(); i++)
+        {
+            if(visited[i] == false && (i == 0 || nums[i-1] != nums[i] || visited[i-1] == true) )
+                // 此题的关键是去重条件：首先要保证该数没被访问过，然后该数与前一个数不相等，
+                // 或者两数相等但前一个数刚刚访问过此时需要连续排列两个相同的数（如果没有这一条件，没有一个结果能成立）
+            {
+                store.push_back(nums[i]);
+                visited[i] = true;
+                backtrack(res, store, visited, nums);
+                store.pop_back();
+                visited[i] = false;
+            }
+        }
+    }
+};
