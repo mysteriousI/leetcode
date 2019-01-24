@@ -1,0 +1,54 @@
+class Solution {
+public:
+    vector<vector<int>> permute(vector<int>& nums) {
+        // 思路1：借助visited数组实现回溯
+        // vector<vector<int>> res;
+        // // unordered_set<int> store; 不要使用unordered_set，其插入是无序的，而排列组合要求每个顺序唯一
+        // vector<int> store;
+        // vector<bool> visited(nums.size());
+        // backtrack(res, store, visited, nums);
+        // return res;
+        
+        // 思路2：可以不借助visited数组，通过每次交换两个数组的两个位置，实现全排列
+        vector<vector<int>> res;
+        permutation(res, nums, 0);
+        return res;
+    }
+    void permutation(vector<vector<int>> &res, vector<int> &nums, int index)
+    {
+        if(index == nums.size())
+        {
+            res.push_back(nums);
+            return;
+        }
+        for(int i=index; i<nums.size(); i++)
+        {
+            int tmp = nums[index];
+            nums[index] = nums[i];
+            nums[i] = tmp;
+            permutation(res, nums, index+1);
+            tmp = nums[index];
+            nums[index] = nums[i];
+            nums[i] = tmp;
+        }
+    }
+    void backtrack(vector<vector<int>>& res, vector<int> store, vector<bool> visited, vector<int> nums)
+    {
+        if(store.size() == nums.size())
+        {
+            res.push_back(store);
+            return;
+        }
+        for(int i=0; i<nums.size(); i++)
+        {
+            if(visited[i] == false)
+            {
+                store.push_back(nums[i]);
+                visited[i] = true;
+                backtrack(res, store, visited, nums);
+                store.pop_back();
+                visited[i] = false;
+            }
+        }
+    }
+};
