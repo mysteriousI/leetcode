@@ -1,0 +1,57 @@
+class Solution {
+public:
+    vector<int> majorityElement(vector<int>& nums) {
+        // 思路1：利用哈希表存储，时间复杂度和空间复杂度均为O(N)
+//         unordered_map<int, int> freq;
+//         vector<int> res;
+//         int times = nums.size()/3;
+//         for(int i=0; i<nums.size(); i++)
+//         {
+//             if(freq.find(nums[i]) == freq.end())
+//                 freq.insert(make_pair(nums[i], 1));
+//             else
+//                 freq[nums[i]]++;
+//         }
+//         for(unordered_map<int, int>::iterator it=freq.begin(); it!=freq.end(); it++)
+//             if(it->second > times)
+//                 res.push_back(it->first);
+//         return res;
+        
+        // 思路2：借助前一题的思路，即摩尔投票法，对于存在可能两个众数的情况，就使用两个计数点
+        int num1, num2;
+        int times1 = 0, times2 = 0;
+        vector<int> res;
+        for(int i=1; i<nums.size(); i++)
+        {
+            if(times1 == 0)
+            {
+                num1 = nums[i];
+                times1 = 1;
+            }
+            else if(times2 == 0)
+            {
+                num2 = nums[i];
+                times2 = 1;
+            }
+            else if(num1 == nums[i])
+                times1++;
+            else if(num2 == nums[i])
+                times2++;
+            else
+            {
+                times1--;
+                times2--;
+            }
+        }
+        times1 = times2 = 0;
+        for(int i=0; i<nums.size(); i++){
+            if(nums[i]==num1)   
+                times1++;
+            else if(nums[i]==num2)  
+                times2++;
+        }
+        if(times1 > nums.size()/3) res.push_back(num1);
+        if(times2 > nums.size()/3) res.push_back(num2);
+        return res;
+    }
+};
