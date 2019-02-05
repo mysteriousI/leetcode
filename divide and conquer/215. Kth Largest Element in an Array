@@ -1,0 +1,58 @@
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        // 思路1：对于第k大或第k小的问题，都可以用堆或基于红黑树实现的有序数据结构set/multiset来解，时间复杂度为O(Nlogk)，比普通排序更快，空间复杂度为O(k)
+        
+        // 设置小顶堆
+        // priority_queue<int, vector<int>, greater<int> > q; 
+        // for(int i=0; i<nums.size(); i++)
+        // {
+        //     q.push(nums[i]);
+        //     if(q.size() > k)
+        //         q.pop();
+        // }
+        // return q.top();
+        
+        // 设置小顶红黑树
+//         multiset<int> intSet;
+//         for(int i=0; i<nums.size(); i++)
+//         {
+//             intSet.insert(nums[i]);
+//             if(intSet.size() > k)
+//                 intSet.erase(intSet.begin());
+//         }
+//         return *intSet.begin();
+        
+        // 思路2：借助快排的思路，使用分治确定k的位置，那么k前的数均小于k，k后的数均大于k，这样的时间复杂度只有O(N+logN)，空间复杂度为O(N)，但会改变数组的相对顺序.
+        partition(nums, 0, nums.size()-1, k-1);
+        return nums[k-1];
+    }
+    
+    void partition(vector<int>& nums, int start, int end, int k)
+    {
+        if(start >= end)
+            return;
+        int left = start, right = end;        
+        int pivot = nums[(left+right)>>1];
+        while(left <= right)
+        {
+            while(left <= right && nums[left] > pivot) // 从大到小排序
+                left++;
+            while(left <= right && nums[right] < pivot)
+                right--;
+            if(left <= right)
+            {
+                int tmp = nums[left];
+                nums[left] = nums[right];
+                nums[right] = tmp;
+                right--;
+                left++;
+            }
+        }
+        if(right+1 <= k)
+            partition(nums, left, end, k); // 此模板可作为通用模板
+        else 
+            partition(nums, start, right, k);
+    }
+
+};
