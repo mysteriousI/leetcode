@@ -1,0 +1,19 @@
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        // 思路：从子数组开始计算得到整体数组的结果，需要两个变量记录，一个是累加的子数组和，一个是最大的子数组和。该问题实际上也是动态规划问题，只是为了节省空间开销，只用了maxsubsum一个变量存储前面子数组最大和的结果。accumulate可以改成动态规划的形式：f(i) = f(i-1) + nums[i] > nums[i] ? f(i-1) + nums[i] : nums[i]
+        int accumulate = 0, MaxSubsum = 0;
+        if(nums.size() == 0)
+            return 0;
+        accumulate = MaxSubsum= nums[0];
+        for(int i=1; i<nums.size(); i++)
+        {
+            if(accumulate < 0)
+                accumulate = nums[i];
+            else
+                accumulate += nums[i];
+            MaxSubsum = MaxSubsum > accumulate ? MaxSubsum : accumulate;
+        }
+        return MaxSubsum;
+    }
+};
