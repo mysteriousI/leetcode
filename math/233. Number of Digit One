@@ -1,0 +1,46 @@
+class Solution {
+public:
+    string int2str(int n)
+    {        
+        if(n == 0)
+            return "0";
+        string res="";
+        while(n)
+        {
+            res = (char)(n%10 + '0') + res;
+            n/=10;
+        }
+        return res;
+    }
+    int str2int(string str, int index)
+    {
+        int count = 0;
+        for(int i=index; i<str.length(); i++)
+            count = count * 10 + (int)(str[i]-'0');
+        return count;
+    }
+    int countDigitOne(int n) {
+        if(n <= 0)
+            return 0;
+        string numstr = int2str(n);
+        // cout<<numstr<<endl;
+        return NumofDigit1(numstr, 0);
+    }
+    int NumofDigit1(string &numstr, int index)
+    {
+        // 思路：分情况讨论，这样可以在O(logN)的时间复杂度下实现，通过举例子验证算法的可行性
+        int len = numstr.length() - index;
+        int first = numstr[index] - '0';
+        if(len == 1 && first == 0)
+            return 0;
+        if(len == 1 && first > 0)
+            return 1;
+        int numFirstDigit = 0;
+        if(first > 1)
+            numFirstDigit = (int)pow(10.0, (len-1));
+        else if(first == 1)
+            numFirstDigit = str2int(numstr, index+1) + 1;
+        int numSecondDigit = first * (len-1) * (int)pow(10.0, (len-2));
+        return numFirstDigit + numSecondDigit + NumofDigit1(numstr, index+1);
+    }
+};
