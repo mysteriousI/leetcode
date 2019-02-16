@@ -1,0 +1,31 @@
+class Solution {
+public:
+    int findNthDigit(int n) {
+        // 思路：将数字分为位数不同的几个类别，根据不同类别的数量来判定所在的位数范围，如个位1-9共9个数位，10-99共180个数位，100-999共2700个数位，1000-9999共36000等。
+        for(int i=1; ;i++)
+        {
+            long long count = (long long)i*9*(int)pow(10.0, i-1);
+            if(n <= count) // 此时n在该范围内，需要注意n==count以及n是下一个数位的第一个数这样的特殊情况。
+            {
+                int locNum;
+                if(n/i == 0 || n%i) // 需要注意当指向该数位的第一个数或者n/i除不尽时就指向下一个数，不需要再减1
+                    locNum = n/i + (int)pow(10.0, i-1);
+                else
+                    locNum = n/i + (int)pow(10.0, i-1) - 1;
+                return findloc(locNum, (n-1)%i);
+            }
+            n -= count;
+        }
+    }
+    
+    int findloc(int locNum, int modNum) // 利用转换成string的方式获取当前位的数字
+    {
+        string res = "";
+        while(locNum)
+        {
+            res = (char)(locNum%10 + '0') + res;
+            locNum /= 10;
+        }
+        return (int)(res[modNum]-'0');
+    }
+};
