@@ -1,0 +1,53 @@
+class Solution {
+public:    
+    int str2int(string str, int index1, int index2)
+    {
+        int count = 0;        
+        count = (int)(str[index1] - '0')*10 + (int)(str[index2] - '0');
+        return count;
+    }
+    // 思路1：递归自顶向下求解，可以把所有情况暴力解出来，这样容易超时，所以在自顶向下的基础上，加入记忆化搜索
+    vector<int> memo;
+    int helper(int index, string &s)
+    {
+        if(memo[index] != -1)
+            return memo[index];
+        if(index == s.length())
+        {
+            memo[index] = 1;
+            return 1;
+        }
+        int res = 0;
+        if(index < s.length()-1) // 取两位数后递归
+        {
+            if(s[index] != '0' && str2int(s, index, index+1) <= 26)
+                res += helper(index+2, s);                
+        }
+        if((int)(s[index]-'0') >= 1) // 取一位数后递归
+            res += helper(index+1, s);
+        memo[index] = res;
+        return res;
+    }
+    
+    // int numDecodings(string s) {
+    //     memo = vector<int>(s.length()+1, -1);
+    //     return helper(0, s);
+    // }
+    int numDecodings(string s) {
+        // 思路2：将递归解法转换成DP解，自底向上，存在这样的状态转移公式：f(i) = e(i)*f(i+1) + g(i, i+1)*f(i+2)，表示字符串尾部的结果决定前面的结果，e(i)表示第i位的数为0时函数结果为0否则为1；g(i, i+1)表示第i位与i+1位连接如果是合法的两位数函数结果就为1，否则为0。
+        if(s.length() == 0)
+            return 0;
+        vector<int> dp(s.length()+1, 0);// 按字符串的长度来定义动态数组的长度
+        dp[s.length()] = 1;
+        if(s[s.length()-1] > '0')
+            dp[s.length()-1] = 1;
+        for(int i=s.length()-2; i >= 0; i--)
+        {
+            if(s[i] != '0') // 数位必须大于0
+                dp[i] = dp[i+1];
+            if(s[i] != '0' && str2int(s, i, i+1) <= 26)
+                dp[i] += dp[i+2];
+        }
+        return dp[0];
+    }
+};
