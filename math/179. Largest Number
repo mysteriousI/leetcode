@@ -1,0 +1,72 @@
+class Solution {
+public:
+    static string int2str(int n)
+    {
+        string str = "";
+        if(n == 0)
+            return str + '0';
+        while(n)
+        {
+            str = char(n%10 + '0') + str;
+            n /= 10;
+        }
+        return str;
+    }
+    static bool cmp(int x, int y)
+    {
+        string str_x = int2str(x);
+        string str_y = int2str(y);
+        // 两个字符串既然需要连接，那就直接连接来比较哪种连接的结果最大即可
+        string concat1 = str_x + str_y;
+        string concat2 = str_y + str_x;
+        if(concat1 > concat2)
+            return true;
+        return false;
+        
+    }
+    string largestNumber(vector<int>& nums) { 
+        // 思路1：最直接的方法是将所有情况都排列一遍，再比较和寻找最大的排列值，这样的时间复杂度为O(N!)
+        // 思路2：利用排序，两两比较将大的值排在前面，这样可以保证时间复杂度为O(NlogN)
+        
+        sort(nums.begin(), nums.end(), cmp);
+        // 借此题来实现一下归并排序的白板编程
+        // vector<int> new_nums(nums.size());
+        // mergesort(nums, 0, nums.size()-1, new_nums);
+        string res = "";
+        if(nums[0] == 0)
+            return res + "0";
+        for(int i=0; i<nums.size(); i++)
+            res += int2str(nums[i]);
+        return res;
+    }
+    void mergesort(vector<int>& nums, int start, int end, vector<int>& res)
+    {
+        if(start >= end)
+            return;
+        int left = (start + end)/2;
+        int right = left + 1;
+        mergesort(nums, start, left, res);
+        mergesort(nums, right, end, res);
+        merge(nums, start, end, res);
+    }
+    void merge(vector<int>& nums, int start, int end, vector<int>& res)
+    {
+        int left = start;
+        int right = (start + end)/2+1;
+        int mid = right - 1;
+        int index = left;
+        while(left <= mid && right <= end)
+        {
+            if(cmp(nums[left], nums[right])) // 调用自己定义的cmp函数
+                res[index++] = nums[left++];
+            else
+                res[index++] = nums[right++];
+        }
+        while(left <= mid)
+            res[index++] = nums[left++];
+        while(right <= end)
+            res[index++] = nums[right++];
+        for(int i=0; i<=end; i++) //res是一个局部有序的结果，需要把局部有序的结果存放到nums里更新nums。把有序的结果保留到原数组
+            nums[i] = res[i];
+    }
+};
