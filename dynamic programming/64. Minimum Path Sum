@@ -1,0 +1,39 @@
+class Solution {
+public:
+    int minPathSum(vector<vector<int>>& grid) {
+        // 思路：典型的动态规划问题，在二维数组上的状态转移方程为：f(i, j) = min(f(i-1, j), f(i, j-1)) + grid[i][j]
+        // if(grid.size() == 0 || grid[0].size() == 0)
+        //     return 0;
+        // int m = grid.size();
+        // int n = grid[0].size();
+        // vector<vector<int>> dp(m, vector<int>(n, 0));
+        // // 初始化边界值
+        // dp[0][0] = grid[0][0];
+        // for(int i=1; i<m; i++)
+        //     dp[i][0] = dp[i-1][0] + grid[i][0];
+        // for(int j=1; j<n; j++)
+        //     dp[0][j] = dp[0][j-1] + grid[0][j];
+        // for(int i=1; i<m; i++)
+        //     for(int j=1; j<n; j++)
+        //         dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + grid[i][j];
+        // return dp[m-1][n-1];
+        
+        // 通过观察代码可以发现，每一次状态转移后，实际上只用得上前一行和前一列的结果，再往前存储的结果已经不再需要了，此时可以考虑一个更简单的方法，只用一个一维数组来存储结果，状态转移方程变为：f(j) = min(f(j), f(j-1)) + grid[i][j], f(j)表示前一行即i-1行对应j列的结果，下一行只需要根据上一行来更新。
+        if(grid.size() == 0 || grid[0].size() == 0)
+            return 0;
+        int m = grid.size();
+        int n = grid[0].size();
+        vector<int> dp(n);
+        // 初始化第一行的结果
+        dp[0] = grid[0][0];
+        for(int j=1; j<n; j++)
+            dp[j] = dp[j-1] + grid[0][j];
+        for(int i=1; i<m; i++)
+            for(int j=0; j<n; j++)
+                if(j == 0)
+                    dp[j] = dp[j] + grid[i][j];
+                else
+                    dp[j] = min(dp[j], dp[j-1]) + grid[i][j];
+        return dp[n-1];
+    }
+};
