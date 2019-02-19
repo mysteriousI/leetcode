@@ -1,0 +1,21 @@
+class Solution {
+public:
+    int nthUglyNumber(int n) {
+        // 思路: 用三个记录2，3，5乘子的数组定位变量，记录每一次加入数组的最小值，这样就保证了从小到大的顺序
+        vector<int> res(n, 1);
+        int i2 = 0, i3 = 0, i5 = 0;
+        int mn = 1;
+        for(int i=1; i<n; i++)
+        {
+            int m2 = res[i2] * 2;
+            int m3 = res[i3] * 3;
+            int m5 = res[i5] * 5;
+            mn = min(m2, min(m3, m5));
+            if(mn == m2) i2++;
+            if(mn == m3) i3++;
+            if(mn == m5) i5++;
+            res[i] = mn;
+        }
+        return mn; 
+    }
+};
