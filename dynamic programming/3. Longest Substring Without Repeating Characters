@@ -1,0 +1,25 @@
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        // 思路：利用动态规划解决，以字符串中每一个位置的字符为结尾分析对应的最长字符串，从而得到整体的最长子字符串。该思路是一个通解
+        int maxlen = 0;
+        if(s.length() == 0)
+            return maxlen;
+        vector<int> dp(s.length(), 0);
+        vector<int> letters(256, -1); // 记录字符上一次出现的位置
+        dp[0] = 1;
+        maxlen = 1;
+        letters[s[0]] = 0;
+        for(int i=1; i<s.length(); i++)
+        {
+            if(letters[s[i]] == -1 || i - letters[s[i]] > dp[i-1]) // 以s[i]结尾的字符在前面没有出现过或者出现在当前最长字符串以前
+                dp[i] = dp[i-1]+1;
+            else
+                dp[i] = i - letters[s[i]]; // 如果出现了当前最长字符串中间，就以最短的距离为当前最长字符串
+            letters[s[i]] = i;
+        }
+        for(int i=0; i<dp.size(); i++)
+            maxlen = maxlen > dp[i] ? maxlen : dp[i]; // 遍历寻找最长的子字符串
+        return maxlen;
+    }
+};
