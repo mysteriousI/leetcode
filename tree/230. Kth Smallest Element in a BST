@@ -1,0 +1,50 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int findKthsmall(TreeNode* root, int &k) // 二叉排序树一定是使用中序遍历
+    {
+        if(root)
+        {
+            int res = 0;
+            res = findKthsmall(root->left, k);
+            if(k)
+            {
+                res = root->val;
+                k--;
+            }
+            if(k)
+                res = findKthsmall(root->right, k);
+            return res;
+        }
+        return -1;
+    }
+    
+    int findKthbig(TreeNode* root, int &k) // 如果是求第K大的元素，可以将中序遍历换一下遍历的顺序，从右到左遍历
+    {
+        if(root)
+        {
+            int res = 0;
+            res = findKthbig(root->right, k);
+            if(k)
+            {
+                res = root->val;
+                k--;
+            }
+            if(k)
+                res = findKthbig(root->left, k);
+            return res;
+        }
+        return -1;
+    }
+    int kthSmallest(TreeNode* root, int k) {        
+        return findKthsmall(root, k);
+    }
+};
