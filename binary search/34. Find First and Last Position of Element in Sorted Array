@@ -5,27 +5,34 @@ public:
         if(nums.size() == 0)
             return vector<int>{-1, -1};
         int low = 0, high = nums.size()-1;
-        int left=-1, right=-1;
-        while(low <= high)
-        {
-            int mid = (low+high)/2;
-            if(nums[mid] == target) // 第一步先确定中间的k所在的位置，然后再寻找其头和尾
-            {               
-                if(mid == 0 || nums[mid-1] < target) // 中间的值即第一个target
-                    left = mid;
-                else
-                    left = GetFirstTarget(nums, target, low, mid-1);
-                if(mid == nums.size()-1 || nums[mid+1] > target) // 中间的值即最后一个target
-                    right = mid;
-                else
-                    right = GetLastTarget(nums, target, mid+1, high);
-                break;
-            }
-            else if(nums[mid] < target)
-                low = mid+1;
-            else
-                high = mid-1;
-        }
+        
+        
+        // int left=-1, right=-1;        
+        // while(low <= high)
+        // {
+        //     int mid = (low+high)/2;
+        //     if(nums[mid] == target) // 第一步先确定中间的k所在的位置，然后再寻找其头和尾
+        //     {               
+        //         if(mid == 0 || nums[mid-1] < target) // 中间的值即第一个target
+        //             left = mid;
+        //         else
+        //             left = GetFirstTarget(nums, target, low, mid-1);
+        //         if(mid == nums.size()-1 || nums[mid+1] > target) // 中间的值即最后一个target
+        //             right = mid;
+        //         else
+        //             right = GetLastTarget(nums, target, mid+1, high);
+        //         break;
+        //     }
+        //     else if(nums[mid] < target)
+        //         low = mid+1;
+        //     else
+        //         high = mid-1;
+        // }
+        
+        // 上面注释的一段可以用以下的段来实现，可以节省代码量，但存在一个问题，找第一个K的步骤是重复的
+        int left = GetFirstTarget(nums, target, low, high);
+        int right = GetLastTarget(nums, target, low, high);
+            
         return vector<int>{left, right};
     }
     
