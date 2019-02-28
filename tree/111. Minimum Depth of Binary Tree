@@ -1,0 +1,74 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    
+    int minDepth(TreeNode* root) {
+        // 层次遍历是一种方法，但时间复杂度较高，需要存储节点并重新遍历
+//         int curLevelCount = 1, nextLevelCount = 0;  
+//         queue<TreeNode*> q;  
+//         stack<TreeNode*> sta;
+//         stack<int> level;
+//         q.push(root);  
+//         if(root == NULL)
+//             return 0;
+//         level.push(curLevelCount);
+//         while(!q.empty())  
+//         {  
+//             TreeNode* temp = q.front();
+//             sta.push(temp);
+//             q.pop();          
+//             curLevelCount--;            
+//             if(NULL != temp->left)  
+//             {  
+//                 q.push(temp->left);  
+//                 nextLevelCount++;  
+//             }  
+//             if(NULL != temp->right)  
+//             {  
+//                 q.push(temp->right);  
+//                 nextLevelCount++;  
+//             }  
+//             if(0 == curLevelCount)  
+//             {  
+//                 if(nextLevelCount > 0)
+//                     level.push(nextLevelCount);
+//                 curLevelCount = nextLevelCount;  
+//                 nextLevelCount = 0;  
+//             }  
+//         }
+        
+//         int mindepth = level.size();
+//         while(level.size())
+//         {
+//             int count = level.top();
+//             for(int i = 0; i<count; i++)
+//             {
+//                 TreeNode *cur = sta.top();
+//                 sta.pop();
+//                 if(cur->left == NULL && cur->right == NULL)
+//                     mindepth = mindepth > level.size()?level.size():mindepth;
+//             }
+//             level.pop();
+//         }
+//         return mindepth;
+        
+        // 用dfs更为简单，需要注意这里有个陷阱，需要分析根结点是否有孩子
+        if(root == NULL)
+            return 0;
+        int left = minDepth(root->left);
+        int right = minDepth(root->right);
+        if(left == 0) // 需要注意一个细节，如果根节点没有左孩子或右孩子，需要考虑有孩子的子树的最低深度
+            return right + 1;
+        else if(right == 0)
+            return left + 1;
+        return left < right ? left + 1 : right + 1;
+    }
+};
