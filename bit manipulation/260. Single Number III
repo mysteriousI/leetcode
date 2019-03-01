@@ -1,0 +1,30 @@
+class Solution {
+public:
+    vector<int> singleNumber(vector<int>& nums) {
+        // 数组中只出现一次的一个数字的拓展，存在出现一次的两个数字时，可以从头到尾异或得到最后要求的两个数字的异或结果，然后在这个结果中找到第一位为1的位，按照这个位把数组分成两个子数组，两个子数组分别异或得到的两个数则为要求的结果。
+        int xorsum = 0;
+        for(int i=0; i<nums.size(); i++)
+            xorsum ^= nums[i];
+        int indexof1 = findFirstBit1(xorsum);
+        int num1 = 0, num2 = 0;
+        for(int i=0; i<nums.size(); i++)
+        {
+            if( (nums[i] >> indexof1) & 1 )// 确定nums[i]的indexof1位是否为1
+                num1 ^= nums[i];
+            else
+                num2 ^= nums[i];
+        }
+        return vector<int>{num1, num2};
+    }
+    
+    int findFirstBit1(int n) // 确定第一个是1的位
+    {
+        int indexofBit = 0; // 要小于32位
+        while( (n & 1) == 0 && indexofBit < 8*sizeof(int)) // 需要注意，n&1的运算需要加括号，其优先级较低
+        {
+            n = n >> 1;
+            indexofBit++;
+        }
+        return indexofBit;
+    }
+};
