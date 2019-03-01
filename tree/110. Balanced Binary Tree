@@ -1,0 +1,36 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool judgeBalance(TreeNode* root, int &depth)
+    {
+        if(root == NULL)
+            return true;        
+        depth += 1;
+        int raw = depth;
+        bool left = judgeBalance(root->left, depth);
+        if(left == false)
+            return false; // 如果左子树已经不平衡，不需要再往下判断
+        int leftdepth = depth; // 记录左子树的深度
+        
+        depth = raw;  // 恢复原来根节点的深度
+        bool right = judgeBalance(root->right, depth);
+        if(right == false)
+            return false;
+        int rightdepth = depth; // 记录右子树的深度
+        
+        depth = max(leftdepth, rightdepth); // 记录当前树的最大深度
+        return abs(leftdepth - rightdepth) <= 1 ? true : false;
+    }
+    bool isBalanced(TreeNode* root) { 
+        int depth = 0;
+        return judgeBalance(root, depth);
+    }
+};
