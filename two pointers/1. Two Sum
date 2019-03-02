@@ -1,0 +1,60 @@
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        // 思路1：使用哈希表来存储每个值，时间复杂度为O(N)，空间复杂度为O(N)
+        // vector<int> res;
+        // unordered_map<int, vector<int>> map;
+        // for(int i=0; i<nums.size(); i++)
+        // {
+        //     if(map.find(nums[i]) == map.end())
+        //     {
+        //         vector<int> temp;
+        //         temp.push_back(i);
+        //         map.insert(make_pair(nums[i], temp));
+        //     }
+        //     else
+        //         map[nums[i]].push_back(i);
+        // }
+        // for(int i=0; i<nums.size(); i++)
+        // {
+        //     if(map.find(target - nums[i]) != map.end() && target - nums[i] != nums[i])
+        //     {
+        //         res.push_back(map[nums[i]][0]);
+        //         res.push_back(map[target - nums[i]][0]);
+        //         return res;
+        //     }
+        //     else if(map.find(target - nums[i]) != map.end() && target - nums[i] == nums[i] && map[nums[i]].size() >= 2)
+        //     {
+        //         res.push_back(map[nums[i]][0]);
+        //         res.push_back(map[nums[i]][1]);
+        //         return res;
+        //     }
+        // }
+        // return res;
+        
+        // 思路2：将数组排序，使用滑动窗口来解决，由于本问题中需要返回数组中每个数的原始坐标，这样还需要O(N)的空间复杂度存储原始数的位置
+        unordered_map<int, vector<int>> num2index;
+        for(int i=0; i<nums.size(); i++)
+            if(num2index.find(nums[i]) == num2index.end())
+                num2index.insert(make_pair(nums[i], vector<int>{i}));
+            else
+                num2index[nums[i]].push_back(i);
+        sort(nums.begin(), nums.end());
+        int left = 0, right = nums.size()-1;
+        while(left < right)
+        {
+            if(nums[left] + nums[right] == target)
+                break;
+            else if(nums[left] + nums[right] < target)
+                left++;
+            else
+                right--;
+        }
+        if(left == right) // 因为这里存在唯一解，如果不存在解，需要判断left是否等于right再做异常判断
+            return vector<int>{-1, -1};
+        if(nums[left] == nums[right])
+            return vector<int>{num2index[nums[left]][0], num2index[nums[left]][1]};
+        return vector<int>{num2index[nums[left]][0], num2index[nums[right]][0]}; 
+    }
+    
+};
