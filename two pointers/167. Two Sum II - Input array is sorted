@@ -1,0 +1,51 @@
+class Solution {
+public:
+    // 此题利用hash查找可以在O(N)时间复杂度上遍历得到结果，但利用有序数组这个性质，可以考虑双指针前后遍历这样巧妙的解法，同样是O(N)的时间复杂度，但空间复杂度只有O(1)
+    // vector<int> twoSum(vector<int>& numbers, int target) {
+    //     map<int,int> _map;
+    //     for(int i = 0;i<numbers.size();i++)
+    //         if(_map.find(numbers[i]) == _map.end())
+    //             _map.insert(pair<int, int>(numbers[i], i+1));
+    //     int index1, index2;
+    //     vector<int> res;
+    //     map<int,int>::iterator it;
+    //     for(it = _map.begin(); it != _map.end(); it++)
+    //         if(_map.find(target - it->first) != _map.end())
+    //         {
+    //             if(target - it->first != it->first)
+    //             {
+    //                 index1 = it->second;
+    //                 index2 = _map[target - it->first];
+    //                 res.push_back(index1);
+    //                 res.push_back(index2);
+    //                 return res;
+    //             }
+    //             else
+    //             {
+    //                 index1 = it->second;
+    //                 index2 = it->second + 1;
+    //                 res.push_back(index1);
+    //                 res.push_back(index2);
+    //                 return res;                        
+    //             }
+    //         }
+    // }
+    vector<int> twoSum(vector<int>& numbers, int target){
+        int start = 0, end = numbers.size()-1;
+        vector<int> res(2);
+        while(start <= end)
+        {
+            if(numbers[start] + numbers[end] == target)
+            {
+                res[0] = start+1;
+                res[1]= end+1;
+                break;
+            }
+            else if(numbers[start] + numbers[end] < target)
+                start++;
+            else
+                end--;
+        }
+        return res;
+    }
+};
