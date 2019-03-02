@@ -1,0 +1,48 @@
+class Solution {
+public:
+    string reverseWords(string s) {
+        // 思路：翻转两次，第一次先把所有字符都翻转过来，然后根据空格和标点分隔单词，再把所有单词翻转一次。
+        if(s.length() == 0)
+            return "";
+        // 截断前后的空格
+        while(s.length() > 0 && s[0] == ' ')
+            s = s.substr(1, s.length()-1);
+        while(s.length() > 0 && s[s.length()-1] == ' ')
+            s = s.substr(0, s.length()-1);
+        
+        reverse(s, 0, s.length()-1);
+        int wordstart = 0, wordend = 0;
+        while(wordend < s.length())
+        {
+            if(s[wordend] != ' ')
+            {
+                wordend++;
+                if(wordend == s.length()) // 最后一个单词后面没有空格
+                    reverse(s, wordstart, wordend-1);
+            }
+            else
+            {
+                reverse(s, wordstart, wordend-1);
+                wordend++;
+                while(wordend < s.length() && s[wordend] == ' ') // 过滤掉空格
+                    s.erase(wordend, 1);
+                wordstart = wordend;
+            }
+        }   
+        return s;
+    }
+    
+    void reverse(string &s, int start, int end)
+    {
+        if(start > end)
+            return;
+        while(start < end)
+        {
+            char tmp = s[start];
+            s[start] = s[end];
+            s[end] = tmp;
+            start++;
+            end--;
+        }
+    }
+};
