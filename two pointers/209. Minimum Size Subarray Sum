@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int minSubArrayLen(int s, vector<int>& nums) {
+        // 思路：要求结果是一个连续子数组，可以考虑滑动窗口，给定两个指针，一开始都指向数组开始的位置，如果当前的窗口和小于s,则前指针往前移，如果和大于s，还要比较如果减去后指针对应的数是否还大于s，如果大于等于s,则后指针向前移一个，保持比较的结果并得到窗口的大小，并取一个最小窗口来确定最后的结果。
+        if(nums.size() == 0)
+            return 0;
+        int ahead = 0, behind = 0; 
+        int winsum = nums[0];
+        int winlen = 1;  // 初始窗口大小为1
+        int minlen = 0;
+        while(ahead >= behind && ahead < nums.size())
+        {
+            if(winsum >= s)
+            {
+                if(minlen == 0 || minlen > winlen)
+                    minlen = winlen;
+                winlen--;
+                winsum -= nums[behind];
+                behind++;
+            }
+            else
+            {
+                ahead++;
+                if(ahead < nums.size()) // 注意ahead指针是否已经到了数组的尾部
+                {                    
+                    winsum += nums[ahead];
+                    winlen++;
+                }                
+            }
+        }
+        return minlen;
+    }
+};
