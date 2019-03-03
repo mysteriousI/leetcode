@@ -1,0 +1,22 @@
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        // 思路：该题是贪心算法的经典问题，在一个数组中，可以找到这样的规律，a,b,c,d,如果b>c，则b-a+(d-c) > d-a,这样在数组中每次找到递增的终点即可。
+        if(prices.size() == 0)
+            return 0;
+        int minprice = prices[0];
+        int countprofit = 0;
+        for(int i=1; i<prices.size(); i++)
+        {
+            if(prices[i] < prices[i-1]) // 递增结束的位置，需要注意的是这里不包括数组最后一个元素的情况，在循环后还要加上最后一个递增的结果
+            {
+                countprofit += prices[i-1] - minprice;
+                minprice = prices[i];
+            }
+            if(minprice > prices[i])
+                minprice = prices[i];         
+        }
+        countprofit += prices[prices.size()-1] - minprice;
+        return countprofit;
+    }
+};
