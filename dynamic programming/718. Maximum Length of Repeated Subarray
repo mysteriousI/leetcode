@@ -1,0 +1,46 @@
+class Solution {
+public:
+    int findLength(vector<int>& A, vector<int>& B) {
+        // 思路：最长连续公共子序列, 注意该题与最长公共子序列的思想不同
+        /* Make the below matrix and then find the maximum value in it.
+
+                 3   2   1   4   7
+            1   [0] [0] [1] [0] [0]
+            2   [0] [1] [0] [0] [0]
+            3   [1] [0] [0] [0] [0]
+            2   [0] [2] [0] [0] [0]
+            1   [0] [0] [3] [0] [0]
+            */
+        if(A.size() == 0 || B.size() == 0)
+            return 0;
+        int n = A.size(), m = B.size();
+        vector<vector<int>> dp(n, vector<int>(m, 0));
+        int maxlen = 0;
+        for(int i=0; i<n; i++)
+            if(A[i] == B[0])
+            {
+                dp[i][0] = 1;
+                maxlen = 1;
+            }
+        for(int j=0; j<m; j++)
+            if(A[0] == B[j])
+            {
+                dp[0][j] = 1;
+                maxlen = 1;
+            }
+        
+        for(int i=1; i<n; i++)
+        {
+            for(int j=1; j<m; j++)
+            {
+                if(A[i] == B[j])
+                    dp[i][j] = dp[i-1][j-1] + 1;
+                else
+                    dp[i][j] = 0;
+                maxlen = max(maxlen, dp[i][j]);
+            }
+        }
+            
+        return maxlen;
+    }
+};
